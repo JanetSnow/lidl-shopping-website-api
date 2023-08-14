@@ -4,8 +4,19 @@ const {verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin} = require(
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+//CREATE 
+router.post("/", async(req,res)=>{
+    const newUser = new User(req.body);
+    try{
+        const savedUser = await newUser.save();
+        res.status(200).json(savedUser);
+    }catch(err){
+        res.status(500).json(err);
+    }
+});
+
 //UPDATE
-router.put("/:id", verifyTokenAndAuthorization, async (req,res)=>{
+router.put("/:id", async (req,res)=>{
     if(req.body.password){
         const hash = bcrypt.hashSync(req.body.password, saltRounds);
         req.body.password = hash;
@@ -35,7 +46,7 @@ router.delete("/:id", verifyTokenAndAuthorization, async(req,res)=>{
 });
 
 //GET USER
-router.get("/find/:id", verifyTokenAndAdmin, async(req,res)=>{
+router.get("/find/:id", async(req,res)=>{
     try{
         const foundUser = await User.findById(req.params.id);
         const {password, ...others} = foundUser._doc;
@@ -46,7 +57,7 @@ router.get("/find/:id", verifyTokenAndAdmin, async(req,res)=>{
 });
 
 //GET ALL USERs
-router.get("/", verifyTokenAndAdmin, async(req,res)=>{
+router.get("/",  async(req,res)=>{
     const query = req.query.new;
     try{
         const foundUsers = query 
@@ -59,7 +70,7 @@ router.get("/", verifyTokenAndAdmin, async(req,res)=>{
 });
 
 //GET USER STATS
-router.get("/stats", verifyTokenAndAdmin, async(req,res)=>{
+router.get("/stats", async(req,res)=>{
     const date = new Date();
     const lastYear = new Date(date.setFullYear(date.getFullYear()-1));
     try{
