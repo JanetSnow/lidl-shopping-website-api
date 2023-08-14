@@ -7,7 +7,10 @@ const ProductSchema = new mongoose.Schema(
         img:{type:String, required:true},
         categories:{type:Array},
         price:{type:Number, required:true},
+        newPrice:{type:Number},
         inStock: { type: Boolean, default: true },
+        hasDiscount: {type: Boolean, default: false},
+        isFlavourWeek: {type: Boolean, default: false},
     },
     {timestamps: true}
 );

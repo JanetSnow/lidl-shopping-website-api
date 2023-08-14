@@ -15,7 +15,7 @@ router.post("/", verifyTokenAndAdmin, async(req,res)=>{
 });
 
 //UPDATE
-router.put("/:id", verifyTokenAndAdmin, async (req,res)=>{
+router.put("/:id", async (req,res)=>{
     try{
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id, 
@@ -44,6 +44,17 @@ router.delete("/:id", verifyTokenAndAdmin, async(req,res)=>{
 router.get("/find/:id", async(req,res)=>{
     try{
         const product = await Product.findById(req.params.id);
+        res.status(200).json(product);
+    }catch(err){
+        res.status(500).json(err);
+    }
+});
+
+//GET PRODUCT BY TITLE
+router.get("/findbytitle/:title", async(req,res)=>{
+    try{
+        const product = await Product.find({title: req.params.title});
+        console.log("product in api:" + product);
         res.status(200).json(product);
     }catch(err){
         res.status(500).json(err);
