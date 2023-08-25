@@ -5,7 +5,8 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 
 //REGISTER
-router.post("/register", (req,res)=>{
+router.post("/register", async (req,res)=>{
+
     bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
         const newUser = new User({
             firstname:req.body.firstname,
@@ -16,12 +17,23 @@ router.post("/register", (req,res)=>{
         });
         try{
             const savedUser = newUser.save();
+            const {password, ...others} = newUser;
+            res.status(200).json(others);                                           
         }catch(err){
-            console.log(err);
+            res.status(500).json(err);
         }
-
     });
 });
+
+// async function isEmailUnique(email) {
+//     try {
+//         const existingUser = await User.findOne({ email: email });
+//         return !existingUser; // If existingUser is null, email is unique
+//     } catch (error) {
+//         console.error('Error checking email uniqueness:', error);
+//         return false;
+//     }
+// }
 
 //LOGIN
 router.post("/login", async (req,res)=>{
@@ -45,6 +57,7 @@ router.post("/login", async (req,res)=>{
                 const {password, ...others} = foundUser._doc;
                 res.status(200).json({...others, accessToken});
             } else {
+                res.status(500).json(err);
                 console.log("wrong password!")
             }
         });
